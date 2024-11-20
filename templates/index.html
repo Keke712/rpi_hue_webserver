@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ url_for('static', filename= 'css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/button.css') }}">
+    <title>Philips Hue Bridge</title>
+</head>
+<body>
+   <nav class="navbar bg-body-tertiary">
+     <div class="container-fluid">
+         <a class="navbar-brand">
+            Philips Hue Bridge
+         </a>
+         <a href="https://github.com/Keke712/" class="navbar-text">
+            github.com/Keke712
+         </a>
+     </div>
+   </nav>
+
+   <div class="container" style="width: 50%; margin: auto; margin-top: 5vh;">
+      <div class="row">
+         <div class="btn-group d-flex justify-content-center" role="group" aria-label="toggle">
+            <a class="btn btn-success btn-lg rounded-0" href="on" role="button">On</a><br>
+            <a class="btn btn-danger btn-lg" href="off" role="button">Off</a><br>
+         </div>
+
+         
+         <div class="btn-group d-flex justify-content-center" role="group" aria-label="toggle" style="margin-top: 5vh;">
+            <div class="slidecontainer">
+               <input id="brightness_range" type="range" min="1" max="100" value="50" class="slider" >
+            </div>
+         </div>
+         
+
+         <div class="btn-group d-flex justify-content-center" role="group" aria-label="toggle" style="margin-top: 5vh;">
+            <canvas id="colorCanvas" class="color-canvas" width="250" height="250" style="border-radius: 50%;"></canvas>
+            <canvas id="colorCanvas2" class="color-canvas" width="250" height="250" style="border-radius: 50%;"></canvas>
+         </div>
+
+      </div>
+   </div>
+
+
+   <script type="text/javascript">
+
+   function initColorPicker() {
+      var canvas = document.getElementById('colorCanvas');
+      var canvasContext = canvas.getContext('2d');
+
+       var image = new Image(250, 250);
+       image.onload = () => canvasContext.drawImage(image, 0, 0, image.width, image.height); 
+       image.src = "{{ url_for('static', filename= 'img/hue_color.png') }}";
+
+
+      canvas.onclick = function(e) {
+      console.log()
+         var imgData = canvasContext.getImageData((e.offsetX / canvas.clientWidth) * canvas.width, (e.offsetY / canvas.clientHeight) * canvas.height, 1, 1)
+         var rgba = imgData.data;
+         var color = "rgba(" + rgba[0] + ", " + rgba[1] + ", " + rgba[2] + ", " + rgba[3] + ")";
+
+         location.href = "/color?rgb="+rgba[0] + ", " + rgba[1] + ", " + rgba[2];
+      }
+   }
+
+   function initColorPicker2() {
+      var canvas = document.getElementById('colorCanvas2');
+      var canvasContext = canvas.getContext('2d');
+
+       var image = new Image(250, 250);
+       image.onload = () => canvasContext.drawImage(image, 0, 0, image.width, image.height); 
+       image.src = "{{ url_for('static', filename= 'img/hue_color2.png') }}";
+
+
+      canvas.onclick = function(e) {
+      console.log()
+         var imgData = canvasContext.getImageData((e.offsetX / canvas.clientWidth) * canvas.width, (e.offsetY / canvas.clientHeight) * canvas.height, 1, 1)
+         var rgba = imgData.data;
+         var color = "rgba(" + rgba[0] + ", " + rgba[1] + ", " + rgba[2] + ", " + rgba[3] + ")";
+
+         location.href = "/color?rgb="+rgba[0] + ", " + rgba[1] + ", " + rgba[2];
+      }
+   }
+
+   initColorPicker();
+   initColorPicker2();
+
+   var rangeInput = document.getElementById("brightness_range");
+
+   rangeInput.addEventListener("change", function() {
+       // Vous pouvez accéder à la valeur actuelle du champ de saisie de la plage ici
+       var value = rangeInput.value;
+       // Faites quelque chose avec la valeur, par exemple, changer l'URL
+       location.href = "/brightness?p=" + value;
+   }, false);
+
+
+
+   </script>
+
+
+</body>
+</html>
