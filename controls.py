@@ -1,4 +1,5 @@
-import simplepyble
+import simplepyble # type: ignore
+from errors import NO_ADAPTERS_FOUND, NO_DEVICE_FOUND, ERROR_CONNECTING
 
 class Service:
 	def __init__(self):
@@ -10,7 +11,7 @@ class Adapter:
 		# scan adapter
 		adapters = simplepyble.Adapter.get_adapters()
 		if len(adapters) == 0:
-			return "No adapters found"
+			return NO_ADAPTERS_FOUND
 
 		# select adapter
 		self.adapter = adapters[0]
@@ -20,16 +21,14 @@ class Adapter:
 	def scan_devices(self):
 		# Scan for 5 seconds
 		print("Adapter scanning devices (5s)")
-		# scan peri
 		self.adapter.scan_for(5000)
-		p = self.adapter.scan_get_results()
-		return p
+		return self.adapter.scan_get_results()
 
 	def select_device(self, dlist, address):
 		for i in dlist:
 			if i.address() == address:
 				return i
-		print("No device found")
+		print(NO_DEVICE_FOUND)
 		return False
 
 	# select peri
@@ -40,7 +39,7 @@ class Adapter:
 			print("Connected")
 			return True
 		except Exception:
-			print("Error: "+str(Exception))
+			print(ERROR_CONNECTING + str(Exception))
 			return False
 
 	def scan_services(self, device):
